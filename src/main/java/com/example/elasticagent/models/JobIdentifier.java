@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.text.MessageFormat.format;
 
@@ -155,13 +156,19 @@ public class JobIdentifier {
     
     public JobIdentifier(List<Tag> tags)
     {
-    	//TODO: implement this
-    	this.pipelineName = pipelineName;
-        this.pipelineCounter = pipelineCounter;
-        this.pipelineLabel = pipelineLabel;
-        this.stageName = stageName;
-        this.stageCounter = stageCounter;
-        this.jobName = jobName;
-        this.jobId = jobId;
+    	ConcurrentHashMap<String, String> tagsMap = new ConcurrentHashMap<String, String>();
+    	for(Tag tag : tags)
+    	{
+    		tagsMap.put(tag.key(), tag.value());
+
+    	}
+    	
+    	this.pipelineName = GSON.fromJson(tagsMap.get("pipelineName"), String.class);
+        this.pipelineCounter = GSON.fromJson(tagsMap.get("pipelineCounter"), Long.class);
+        this.pipelineLabel = GSON.fromJson(tagsMap.get("pipelineLabel"), String.class);
+        this.stageName = GSON.fromJson(tagsMap.get("stageName"), String.class);
+        this.stageCounter = GSON.fromJson(tagsMap.get("stageCounter"), String.class);
+        this.jobName = GSON.fromJson(tagsMap.get("jobName"), String.class);
+        this.jobId = GSON.fromJson(tagsMap.get("jobId"), Long.class);
     }
 }

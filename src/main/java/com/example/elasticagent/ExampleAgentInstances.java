@@ -37,12 +37,11 @@ public class ExampleAgentInstances implements AgentInstances<ExampleInstance> {
     
     @Override
     public ExampleInstance create(CreateAgentRequest request, PluginSettings settings) throws Exception {
-        // TODO: Implement me!
-    	LOG.info("MyPlugin: create for jobIdentifier: " + request.jobIdentifier());
+    	LOG.info("Recieved create instance request for jobIdentifier: " + request.jobIdentifier());
     	ExampleInstance existingInstance = this.find(request.jobIdentifier());
     	if(existingInstance != null)
     	{
-    		LOG.info("MyPlugin: agent has already been created for that job");
+    		LOG.info("An agent has already been created for that job");
     		return existingInstance;
     	}
     	
@@ -53,20 +52,6 @@ public class ExampleAgentInstances implements AgentInstances<ExampleInstance> {
     	
     	this.register(newInstance);
     	return newInstance;
-    			/*
-                TagSpecifications=[{
-                    'ResourceType':'instance',
-                    'Tags': [{
-                        'Key': 'StopAt',
-                        'Value': stopTime.isoformat()
-                    }]
-                }])*/
-    	
-    	
-        //throw new UnsupportedOperationException();
-//        ExampleInstance instance = ExampleInstance.create(request, settings);
-//        register(instance);
-//        return instance;
     }
 
     @Override

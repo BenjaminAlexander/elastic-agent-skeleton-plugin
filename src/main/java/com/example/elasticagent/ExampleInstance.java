@@ -34,12 +34,10 @@ import java.util.function.BiFunction;
 
 public class ExampleInstance {
 
-    private final JobIdentifier jobIdentifier;
     private Instance instance;
     
-    public ExampleInstance(Instance instance, JobIdentifier jobIdentifier) {
+    public ExampleInstance(Instance instance) {
         this.instance = instance;
-        this.jobIdentifier = jobIdentifier;
     }
 
     public String name() {
@@ -66,7 +64,7 @@ public class ExampleInstance {
     }
 
     public JobIdentifier jobIdentifier() {
-        return jobIdentifier;
+        return new JobIdentifier(instance.tags());
     }
 
     @Override
@@ -100,7 +98,6 @@ public class ExampleInstance {
     	//TODO: the ec2 object should probably be a singleton
     	private static Ec2Client ec2 = null;
     	private static final Logger LOG = Logger.getLoggerFor(Builder.class);
-    	private static Clock clock = Clock.DEFAULT;
     	
     	private static Ec2Client getEc2()
     	{
@@ -189,7 +186,7 @@ public class ExampleInstance {
         		LOG.info("Instance id: " + instance.instanceId());
         	}
     		
-    		return new ExampleInstance(response.instances().get(0), request.jobIdentifier());
+    		return new ExampleInstance(response.instances().get(0));
     	}
     }
 }

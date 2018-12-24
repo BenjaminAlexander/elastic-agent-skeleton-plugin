@@ -41,7 +41,7 @@ public class AgentStatusReportExecutorTest {
         AgentStatusReportRequest agentStatusReportRequest = new AgentStatusReportRequest(agentId, null);
         AgentStatusReport agentStatusReport = new AgentStatusReport(null, agentId, null);
         when(pluginRequest.getPluginSettings()).thenReturn(pluginSettings);
-        ExampleInstance agentInstance = new ExampleInstance(null, new JobIdentifier());
+        ExampleInstance agentInstance = new ExampleInstance(null);
         when(agentInstances.find(agentId)).thenReturn(agentInstance);
         when(agentInstances.getAgentStatusReport(pluginSettings, agentInstance)).thenReturn(agentStatusReport);
         when(viewBuilder.build("status-report-template", agentStatusReport)).thenReturn("agentStatusReportView");
@@ -61,7 +61,7 @@ public class AgentStatusReportExecutorTest {
         AgentStatusReportRequest agentStatusReportRequest = new AgentStatusReportRequest(null, jobIdentifier);
         AgentStatusReport agentStatusReport = new AgentStatusReport(jobIdentifier, "elastic-agent-id", null);
         when(pluginRequest.getPluginSettings()).thenReturn(pluginSettings);
-        ExampleInstance instance = new ExampleInstance(null, new JobIdentifier());
+        ExampleInstance instance = new ExampleInstance(null);
         when(agentInstances.find(jobIdentifier)).thenReturn(instance);
         when(agentInstances.getAgentStatusReport(pluginSettings, instance)).thenReturn(agentStatusReport);
         when(viewBuilder.build("status-report-template", agentStatusReport)).thenReturn("agentStatusReportView");
