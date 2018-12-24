@@ -36,11 +36,11 @@ import java.util.Map;
 import java.util.Properties;
 
 public class CreateAgentRequest {
-	private static final String AGENT_AUTO_REGISTER_KEY = "agent.auto.register.key";
-	private static final String AGENT_AUTO_REGISTER_ENVIRONMENTS = "agent.auto.register.environments";
-	private static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_ID = "agent.auto.register.elasticAgent.agentId";
-	private static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_PLUGIN_ID = "agent.auto.register.elasticAgent.pluginId";
-	private static final String AGENT_AUTO_REGISTER_HOSTNAME = "agent.auto.register.hostname";
+	public static final String AGENT_AUTO_REGISTER_KEY = "agent.auto.register.key";
+	public static final String AGENT_AUTO_REGISTER_ENVIRONMENTS = "agent.auto.register.environments";
+	public static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_ID = "agent.auto.register.elasticAgent.agentId";
+	public static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_PLUGIN_ID = "agent.auto.register.elasticAgent.pluginId";
+	public static final String AGENT_AUTO_REGISTER_HOSTNAME = "agent.auto.register.hostname";
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private static final Logger LOG = Logger.getLoggerFor(CreateAgentRequest.class);
     private String autoRegisterKey;

@@ -25,43 +25,44 @@ import software.amazon.awssdk.services.ec2.model.ResourceType;
 import software.amazon.awssdk.services.ec2.model.RunInstancesMonitoringEnabled;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
+import software.amazon.awssdk.services.ec2.model.Tag;
 import software.amazon.awssdk.services.ec2.model.TagSpecification;
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
 import java.util.function.BiFunction;
 
 public class ExampleInstance {
 
-	private final DateTime createdAt;
-    private final Map<String, String> properties;
-    private final String environment;
     private final JobIdentifier jobIdentifier;
-    private String name;
-
-    public ExampleInstance(String name, Date createdAt, Map<String, String> properties, String environment, JobIdentifier jobIdentifier) {
-        this.name = name;
-        this.createdAt = new DateTime(createdAt);
-        this.properties = properties;
-        this.environment = environment;
+    private Instance instance;
+    
+    public ExampleInstance(Instance instance, JobIdentifier jobIdentifier) {
+        this.instance = instance;
         this.jobIdentifier = jobIdentifier;
     }
 
     public String name() {
-        return name;
+        return instance.instanceId();
     }
 
     public DateTime createdAt() {
-        return createdAt;
+    	Instant launchInstant = Instant.ofEpochSecond(instance.launchTime().getEpochSecond());
+        return new DateTime(launchInstant);
+    }
+    
+    public String getTagValue(String key)
+    {
+    	for(Tag tag : instance.tags())
+    	{
+    		if(tag.key() == key)
+    			return tag.value();
+    	}
+    	return null;
     }
 
     public String environment() {
-        return environment;
-    }
-
-    public Map<String, String> properties() {
-        return properties;
+        return getTagValue(CreateAgentRequest.AGENT_AUTO_REGISTER_ENVIRONMENTS);
     }
 
     public JobIdentifier jobIdentifier() {
@@ -75,12 +76,12 @@ public class ExampleInstance {
 
         ExampleInstance that = (ExampleInstance) o;
 
-        return name != null ? name.equals(that.name) : that.name == null;
+        return instance != null ? instance.equals(that.instance) : that.instance == null;
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return instance != null ? instance.hashCode() : 0;
     }
     
 	@FunctionalInterface
@@ -188,7 +189,7 @@ public class ExampleInstance {
         		LOG.info("Instance id: " + instance.instanceId());
         	}
     		
-    		return new ExampleInstance(response.instances().get(0).instanceId(), clock.now().toDate(), request.properties(), request.environment(), request.jobIdentifier());
+    		return new ExampleInstance(response.instances().get(0), request.jobIdentifier());
     	}
     }
 }

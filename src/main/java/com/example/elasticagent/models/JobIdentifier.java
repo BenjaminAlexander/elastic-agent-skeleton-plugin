@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.ec2.model.Tag;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import static java.text.MessageFormat.format;
@@ -150,5 +151,17 @@ public class JobIdentifier {
 		tags.add(Tag.builder().key("jobName").value(GSON.toJson(jobName)).build());
 		tags.add(Tag.builder().key("jobId").value(GSON.toJson(jobId)).build());
     	return tags;
+    }
+    
+    public JobIdentifier(List<Tag> tags)
+    {
+    	//TODO: implement this
+    	this.pipelineName = pipelineName;
+        this.pipelineCounter = pipelineCounter;
+        this.pipelineLabel = pipelineLabel;
+        this.stageName = stageName;
+        this.stageCounter = stageCounter;
+        this.jobName = jobName;
+        this.jobId = jobId;
     }
 }
