@@ -17,6 +17,7 @@
 package com.example.elasticagent.executors;
 
 import com.example.elasticagent.RequestExecutor;
+import com.example.elasticagent.ExampleInstance.Command;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.logging.Logger;
@@ -37,7 +38,7 @@ public class GetProfileMetadataExecutor implements RequestExecutor {
     	return new ArrayList<AgentProfileField>(FIELDS.values());
     }
     
-    public static AgentProfileField.Command getField(String key, String value) throws Exception
+    public static Command getField(String key, String value) throws Exception
     {
     	if(FIELDS.containsKey(key))
     		return FIELDS.get(key).getCommand(value);

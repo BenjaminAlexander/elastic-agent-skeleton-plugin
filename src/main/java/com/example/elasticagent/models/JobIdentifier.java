@@ -1,6 +1,5 @@
 package com.example.elasticagent.models;
 
-import com.example.elasticagent.AWSInstance;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -49,7 +49,10 @@ public class AWSInstanceTest {
                 "}");
         
         //TODO: set a way to run AWS and non-AWS test separately
-        AWSInstance newInstance = AWSInstance.Factory(request, pluginSettings);
+        ExampleInstance newInstance = (new ExampleInstance.Builder())
+    			.createAgentRequest(request)
+    			.pluginSettings(pluginSettings)
+    			.build();
     }
 	
 	

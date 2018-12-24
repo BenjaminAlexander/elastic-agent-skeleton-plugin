@@ -16,7 +16,9 @@
 
 package com.example.elasticagent.executors;
 
-import com.example.elasticagent.AWSInstanceBuilder;
+import com.example.elasticagent.ExampleInstance.Builder;
+import com.example.elasticagent.ExampleInstance.Command;
+import com.example.elasticagent.ExampleInstance.CommandDefinition;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
@@ -30,19 +32,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 //TODO: why is there metadat and profileMetaData? is it JSON structure?
 public class AgentProfileField {
-
-	//TODO: name and refactor this
-	@FunctionalInterface
-	interface CommandDefinition 
-	{ 
-		AWSInstanceBuilder apply(AWSInstanceBuilder builder, String value); 
-	}
-	
-	@FunctionalInterface
-	public interface Command 
-	{ 
-		AWSInstanceBuilder apply(AWSInstanceBuilder builder); 
-	}
 	
     @Expose
     @SerializedName("key")
@@ -97,13 +86,9 @@ public class AgentProfileField {
         return metadata.required;
     }
     
-    public AWSInstanceBuilder buildInstance(AWSInstanceBuilder builder, String value){
-    	return commandDefinition.apply(builder, value);
-    }
-    
     public Command getCommand(String value)
     {
-    	return (AWSInstanceBuilder builder) -> { return commandDefinition.apply(builder, value); };
+    	return (Builder builder) -> { return commandDefinition.apply(builder, value); };
     }
 
     public static class ProfileMetadata {

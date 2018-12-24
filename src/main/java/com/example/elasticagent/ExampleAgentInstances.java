@@ -21,14 +21,6 @@ import com.example.elasticagent.models.JobIdentifier;
 import com.example.elasticagent.models.StatusReport;
 import com.example.elasticagent.requests.CreateAgentRequest;
 import com.thoughtworks.go.plugin.api.logging.Logger;
-import software.amazon.awssdk.services.ec2.Ec2Client;
-import software.amazon.awssdk.services.ec2.model.InstanceType;
-import software.amazon.awssdk.services.ec2.model.RunInstancesMonitoringEnabled;
-import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
-import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
-import software.amazon.awssdk.services.ec2.model.Tag;
-import software.amazon.awssdk.services.ec2.model.CreateTagsRequest;
-import software.amazon.awssdk.services.ec2.model.Instance;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +46,11 @@ public class ExampleAgentInstances implements AgentInstances<ExampleInstance> {
     		return existingInstance;
     	}
     	
-    	AWSInstance newInstance = AWSInstance.Factory(request, settings);
+    	ExampleInstance newInstance = (new ExampleInstance.Builder())
+    			.createAgentRequest(request)
+    			.pluginSettings(settings)
+    			.build();
+    	
     	this.register(newInstance);
     	return newInstance;
     			/*

@@ -16,33 +16,24 @@
 
 package com.example.elasticagent.requests;
 
-import com.example.elasticagent.AWSInstanceBuilder;
+import com.example.elasticagent.ExampleInstance.Command;
 import com.example.elasticagent.AgentInstances;
 import com.example.elasticagent.Constants;
 import com.example.elasticagent.PluginRequest;
 import com.example.elasticagent.RequestExecutor;
 import com.example.elasticagent.executors.CreateAgentRequestExecutor;
 import com.example.elasticagent.executors.GetProfileMetadataExecutor;
-import com.example.elasticagent.executors.AgentProfileField;
 import com.example.elasticagent.models.JobIdentifier;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.logging.Logger;
-
 import software.amazon.awssdk.services.ec2.model.Tag;
-
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 
 public class CreateAgentRequest {
 	private static final String AGENT_AUTO_REGISTER_KEY = "agent.auto.register.key";
@@ -51,12 +42,11 @@ public class CreateAgentRequest {
 	private static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_PLUGIN_ID = "agent.auto.register.elasticAgent.pluginId";
 	private static final String AGENT_AUTO_REGISTER_HOSTNAME = "agent.auto.register.hostname";
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-    private static final Logger LOG = Logger.getLoggerFor(GetProfileMetadataExecutor.class);
+    private static final Logger LOG = Logger.getLoggerFor(CreateAgentRequest.class);
     private String autoRegisterKey;
     private Map<String, String> properties;
     private String environment;
     private JobIdentifier jobIdentifier;
-
 
     public CreateAgentRequest() {
     }
@@ -76,28 +66,9 @@ public class CreateAgentRequest {
         return properties;
     }
     
-    /*public AWSInstanceBuilder apply(AWSInstanceBuilder builder) throws Exception
+    public ArrayList<Command> getPropertyCommands() throws Exception
     {
-    	for(Map.Entry<String, String> property : properties.entrySet())
-    	{
-    		builder = GetProfileMetadataExecutor.getField(property.getKey()).getCommand(property.getValue()).apply(builder);
-    	}
-    	
-    	
-    	return builder;
-    }*/
-    
-    /*public void forEachProperty(BiConsumer<? super AgentProfileField, ? super String> action) throws Exception
-    {
-    	for(Map.Entry<String, String> property : properties.entrySet())
-    	{
-    		action.accept(GetProfileMetadataExecutor.getField(property.getKey(), property.getValue()));
-    	}
-    }*/
-    
-    public ArrayList<AgentProfileField.Command> getPropertyCommands() throws Exception
-    {
-    	ArrayList<AgentProfileField.Command> list = new ArrayList<AgentProfileField.Command>();
+    	ArrayList<Command> list = new ArrayList<Command>();
     	for(Map.Entry<String, String> property : properties.entrySet())
     	{
     		list.add(GetProfileMetadataExecutor.getField(property.getKey(), property.getValue()));
