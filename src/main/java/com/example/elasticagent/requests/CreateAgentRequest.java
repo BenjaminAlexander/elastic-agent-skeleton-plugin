@@ -16,39 +16,37 @@
 
 package com.example.elasticagent.requests;
 
+import com.example.elasticagent.ExampleInstance.Command;
 import com.example.elasticagent.AgentInstances;
 import com.example.elasticagent.Constants;
 import com.example.elasticagent.PluginRequest;
 import com.example.elasticagent.RequestExecutor;
 import com.example.elasticagent.executors.CreateAgentRequestExecutor;
+import com.example.elasticagent.executors.GetProfileMetadataExecutor;
 import com.example.elasticagent.models.JobIdentifier;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import software.amazon.awssdk.services.ec2.model.Tag;
-
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
 public class CreateAgentRequest {
-	private static final String AGENT_AUTO_REGISTER_KEY = "agent.auto.register.key";
-	private static final String AGENT_AUTO_REGISTER_ENVIRONMENTS = "agent.auto.register.environments";
-	private static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_ID = "agent.auto.register.elasticAgent.agentId";
-	private static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_PLUGIN_ID = "agent.auto.register.elasticAgent.pluginId";
-	private static final String AGENT_AUTO_REGISTER_HOSTNAME = "agent.auto.register.hostname";
+	public static final String AGENT_AUTO_REGISTER_KEY = "agent.auto.register.key";
+	public static final String AGENT_AUTO_REGISTER_ENVIRONMENTS = "agent.auto.register.environments";
+	public static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_ID = "agent.auto.register.elasticAgent.agentId";
+	public static final String AGENT_AUTO_REGISTER_ELASTIC_AGENT_PLUGIN_ID = "agent.auto.register.elasticAgent.pluginId";
+	public static final String AGENT_AUTO_REGISTER_HOSTNAME = "agent.auto.register.hostname";
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    private static final Logger LOG = Logger.getLoggerFor(CreateAgentRequest.class);
     private String autoRegisterKey;
     private Map<String, String> properties;
     private String environment;
     private JobIdentifier jobIdentifier;
-
 
     public CreateAgentRequest() {
     }
@@ -66,6 +64,16 @@ public class CreateAgentRequest {
 
     public Map<String, String> properties() {
         return properties;
+    }
+    
+    public ArrayList<Command> getPropertyCommands() throws Exception
+    {
+    	ArrayList<Command> list = new ArrayList<Command>();
+    	for(Map.Entry<String, String> property : properties.entrySet())
+    	{
+    		list.add(GetProfileMetadataExecutor.getField(property.getKey(), property.getValue()));
+    	}
+    	return list;
     }
 
     public String environment() {
@@ -88,7 +96,6 @@ public class CreateAgentRequest {
         return new CreateAgentRequestExecutor(this, agentInstances, pluginRequest);
     }
 
-    //TODO: use this method instead of what i wrote before
     public Properties autoregisterProperties() {
         Properties properties = new Properties();
 

@@ -17,34 +17,50 @@
 package com.example.elasticagent.executors;
 
 import com.example.elasticagent.RequestExecutor;
+import com.example.elasticagent.ExampleInstance.Command;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-
+import software.amazon.awssdk.services.ec2.model.RunInstancesRequest.Builder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GetProfileMetadataExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-    public static final Metadata IMAGE_ID = new Metadata("ImageId", true, false);
-    public static final Metadata INSTANCE_TYPE = new Metadata("InstanceType", true, false);
-    public static final Metadata SECURITY_GROUP_ID = new Metadata("SecurityGroupId", true, false);
-    public static final Metadata KEY_NAME = new Metadata("KeyName", true, false);
-
-    public static final List<Metadata> FIELDS = new ArrayList<>();
-
+    private static final ConcurrentHashMap<String, AgentProfileField> FIELDS = new ConcurrentHashMap<String, AgentProfileField>();
+    private static final Logger LOG = Logger.getLoggerFor(GetProfileMetadataExecutor.class);
+    
+    public static List<AgentProfileField> getFields()
+    {
+    	return new ArrayList<AgentProfileField>(FIELDS.values());
+    }
+    
+    public static Command getField(String key, String value) throws Exception
+    {
+    	if(FIELDS.containsKey(key))
+    		return FIELDS.get(key).getCommand(value);
+    	else
+    		throw new Exception("Field Name \"" + key + "\" cannot be found in the elastic agent profile metadata.");
+    }
+    
+    private static void addField(AgentProfileField field)
+    {
+    	FIELDS.put(field.getKey(), field);
+    }
+    
     static {
-        FIELDS.add(IMAGE_ID);
-        FIELDS.add(INSTANCE_TYPE);
-        FIELDS.add(SECURITY_GROUP_ID);
-        FIELDS.add(KEY_NAME);
+        //TODO: how many steps does it take to add a field?  can the number of steps be reduced?
+        addField(new AgentProfileEC2Field("ImageId", true, false, (Builder builder, String value) -> {return builder.imageId(value);}));
+        addField(new AgentProfileEC2Field("InstanceType", true, false, (Builder builder, String value) -> {return builder.instanceType(value);}));
+        addField(new AgentProfileEC2Field("SecurityGroupId", true, false, (Builder builder, String value) -> {return builder.securityGroupIds(value);}));
+        addField(new AgentProfileEC2Field("KeyName", true, false, (Builder builder, String value) -> {return builder.keyName(value);}));
     }
 
     @Override
-
     public GoPluginApiResponse execute() throws Exception {
-        return new DefaultGoPluginApiResponse(200, GSON.toJson(FIELDS));
+        return new DefaultGoPluginApiResponse(200, GSON.toJson(GetProfileMetadataExecutor.getFields()));
     }
 }

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+//TODO: this entire class can probably be removed
 package com.example.elasticagent.executors;
 
-
+import com.example.elasticagent.ExampleInstance.Builder;
 import com.example.elasticagent.utils.Size;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,10 +26,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MemoryMetadata extends Metadata {
+public class MemoryMetadata extends AgentProfileField {
 
     public MemoryMetadata(String key, boolean required) {
-        super(key, required, false);
+        super(key, required, false, (Builder builder, String value) -> {return builder;});
     }
 
     @Override

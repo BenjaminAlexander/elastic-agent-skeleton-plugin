@@ -21,14 +21,6 @@ import com.example.elasticagent.models.JobIdentifier;
 import com.example.elasticagent.models.StatusReport;
 import com.example.elasticagent.requests.CreateAgentRequest;
 import com.thoughtworks.go.plugin.api.logging.Logger;
-import software.amazon.awssdk.services.ec2.Ec2Client;
-import software.amazon.awssdk.services.ec2.model.InstanceType;
-import software.amazon.awssdk.services.ec2.model.RunInstancesMonitoringEnabled;
-import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
-import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
-import software.amazon.awssdk.services.ec2.model.Tag;
-import software.amazon.awssdk.services.ec2.model.CreateTagsRequest;
-import software.amazon.awssdk.services.ec2.model.Instance;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,32 +37,21 @@ public class ExampleAgentInstances implements AgentInstances<ExampleInstance> {
     
     @Override
     public ExampleInstance create(CreateAgentRequest request, PluginSettings settings) throws Exception {
-        // TODO: Implement me!
-    	LOG.info("MyPlugin: create for jobIdentifier: " + request.jobIdentifier());
+    	LOG.info("Recieved create instance request for jobIdentifier: " + request.jobIdentifier());
     	ExampleInstance existingInstance = this.find(request.jobIdentifier());
     	if(existingInstance != null)
     	{
-    		LOG.info("MyPlugin: agent has already been created for that job");
+    		LOG.info("An agent has already been created for that job");
     		return existingInstance;
     	}
     	
-    	AWSInstance newInstance = AWSInstance.Factory(request, settings);
+    	ExampleInstance newInstance = (new ExampleInstance.Builder())
+    			.createAgentRequest(request)
+    			.pluginSettings(settings)
+    			.build();
+    	
     	this.register(newInstance);
     	return newInstance;
-    			/*
-                TagSpecifications=[{
-                    'ResourceType':'instance',
-                    'Tags': [{
-                        'Key': 'StopAt',
-                        'Value': stopTime.isoformat()
-                    }]
-                }])*/
-    	
-    	
-        //throw new UnsupportedOperationException();
-//        ExampleInstance instance = ExampleInstance.create(request, settings);
-//        register(instance);
-//        return instance;
     }
 
     @Override

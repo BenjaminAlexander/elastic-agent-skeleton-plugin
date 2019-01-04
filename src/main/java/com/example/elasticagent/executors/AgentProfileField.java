@@ -16,6 +16,9 @@
 
 package com.example.elasticagent.executors;
 
+import com.example.elasticagent.ExampleInstance.Builder;
+import com.example.elasticagent.ExampleInstance.Command;
+import com.example.elasticagent.ExampleInstance.CommandDefinition;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +28,11 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public class Metadata {
 
+
+//TODO: why is there metadat and profileMetaData? is it JSON structure?
+public class AgentProfileField {
+	
     @Expose
     @SerializedName("key")
     private String key;
@@ -34,18 +40,22 @@ public class Metadata {
     @Expose
     @SerializedName("metadata")
     private ProfileMetadata metadata;
+    
+    //TODO: name this appropriately 
+    private CommandDefinition commandDefinition;
 
-    public Metadata(String key, boolean required, boolean secure) {
-        this(key, new ProfileMetadata(required, secure));
+    public AgentProfileField(String key, boolean required, boolean secure, CommandDefinition commandDefinition) {
+        this(key, new ProfileMetadata(required, secure), commandDefinition);
     }
 
-    public Metadata(String key) {
-        this(key, new ProfileMetadata(false, false));
+    public AgentProfileField(String key, CommandDefinition commandDefinition) {
+        this(key, new ProfileMetadata(false, false), commandDefinition);
     }
 
-    public Metadata(String key, ProfileMetadata metadata) {
+    public AgentProfileField(String key, ProfileMetadata metadata, CommandDefinition commandDefinition) {
         this.key = key;
         this.metadata = metadata;
+        this.commandDefinition = commandDefinition;
     }
 
     public Map<String, String> validate(String input) {
@@ -74,6 +84,11 @@ public class Metadata {
 
     public boolean isRequired() {
         return metadata.required;
+    }
+    
+    public Command getCommand(String value)
+    {
+    	return (Builder builder) -> { return commandDefinition.apply(builder, value); };
     }
 
     public static class ProfileMetadata {

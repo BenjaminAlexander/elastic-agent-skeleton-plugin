@@ -1,6 +1,5 @@
 package com.example.elasticagent.models;
 
-import com.example.elasticagent.AWSInstance;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,7 +11,9 @@ import software.amazon.awssdk.services.ec2.model.Tag;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.text.MessageFormat.format;
 
@@ -151,5 +152,23 @@ public class JobIdentifier {
 		tags.add(Tag.builder().key("jobName").value(GSON.toJson(jobName)).build());
 		tags.add(Tag.builder().key("jobId").value(GSON.toJson(jobId)).build());
     	return tags;
+    }
+    
+    public JobIdentifier(List<Tag> tags)
+    {
+    	ConcurrentHashMap<String, String> tagsMap = new ConcurrentHashMap<String, String>();
+    	for(Tag tag : tags)
+    	{
+    		tagsMap.put(tag.key(), tag.value());
+
+    	}
+    	
+    	this.pipelineName = GSON.fromJson(tagsMap.get("pipelineName"), String.class);
+        this.pipelineCounter = GSON.fromJson(tagsMap.get("pipelineCounter"), Long.class);
+        this.pipelineLabel = GSON.fromJson(tagsMap.get("pipelineLabel"), String.class);
+        this.stageName = GSON.fromJson(tagsMap.get("stageName"), String.class);
+        this.stageCounter = GSON.fromJson(tagsMap.get("stageCounter"), String.class);
+        this.jobName = GSON.fromJson(tagsMap.get("jobName"), String.class);
+        this.jobId = GSON.fromJson(tagsMap.get("jobId"), Long.class);
     }
 }
